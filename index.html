@@ -91,7 +91,6 @@
 
     <form id="form" action="https://formsubmit.co/artemy0509@proton.me" method="POST">
       <input type="hidden" name="_subject" value="Анкета в клан ReallyWorld" />
-      <input type="hidden" name="_next" value="https://artemytema.github.io/anceta/?sent=1" />
       <input type="hidden" name="_captcha" value="false" />
       <div class="field">
         <label>Ник на ReallyWorld и Ваш донат:</label>
@@ -155,18 +154,41 @@
       <button type="submit">Отправить анкету</button>
     </form>
 
-    <div class="result" id="sent">
-      <h2>Анкета отправлена</h2>
-      <p class="hint">Спасибо! Ответ придёт на почту клана.</p>
-    </div>
   </div>
 
   <script>
-    if (new URLSearchParams(location.search).get('sent') === '1') {
-      document.getElementById('sent').style.display = 'block';
-      document.getElementById('form').reset();
-      document.getElementById('sent').scrollIntoView({ behavior: 'smooth' });
-    }
+    const form = document.getElementById('form');
+    let sending = false;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (sending) return;
+      sending = true;
+
+      const data = {};
+      for (const el of form.elements) {
+        if (!el.name) continue;
+        data[el.name] = el.value.trim();
+      }
+
+      try {
+        const res = await fetch('https://formsubmit.co/ajax/artemy0509@proton.me', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+        const answer = await res.json();
+        if (answer.success !== 'true' && answer.success !== true) throw new Error('send failed');
+        form.reset();
+      } catch (_) {
+        form.submit();
+      } finally {
+        sending = false;
+      }
+    });
   </script>
 </body>
 </html>
