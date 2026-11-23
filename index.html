@@ -89,7 +89,10 @@
     <h1>Анкета в клан ReallyWorld</h1>
     <p class="subtitle">Отвечай честно и подробно — это поможет принять решение.</p>
 
-    <form id="form">
+    <form id="form" action="https://formsubmit.co/artemy0509@proton.me" method="POST">
+      <input type="hidden" name="_subject" value="Анкета в клан ReallyWorld" />
+      <input type="hidden" name="_next" value="https://artemytema.github.io/anceta/?sent=1" />
+      <input type="hidden" name="_captcha" value="false" />
       <div class="field">
         <label>Ник на ReallyWorld и Ваш донат:</label>
         <input name="Ник на ReallyWorld и Ваш донат" type="text" required placeholder="Например: wvex | Премиум" />
@@ -149,55 +152,21 @@
         <input name="Кто вас пригласил" type="text" required placeholder="Ник пригласившего" />
       </div>
 
-      <button type="submit">Показать готовую анкету</button>
+      <button type="submit">Отправить анкету</button>
     </form>
 
-    <div class="result" id="result">
-      <h2>Готовая анкета</h2>
-      <pre id="output"></pre>
-      <div class="actions">
-        <button type="button" id="copy">Скопировать</button>
-        <button type="button" id="download" class="secondary">Скачать .txt</button>
-      </div>
-      <p class="hint">Можешь скопировать текст и отправить его в Discord/Telegram.</p>
+    <div class="result" id="sent">
+      <h2>Анкета отправлена</h2>
+      <p class="hint">Спасибо! Ответ придёт на почту клана.</p>
     </div>
   </div>
 
   <script>
-    const form = document.getElementById('form');
-    const result = document.getElementById('result');
-    const output = document.getElementById('output');
-    let text = '';
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const lines = ['АНКЕТА В КЛАН REALLYWORLD', ''];
-      for (const el of form.elements) {
-        if (!el.name) continue;
-        lines.push(el.name + ' ' + (el.value.trim() || '—'));
-      }
-      text = lines.join('\n');
-      output.textContent = text;
-      result.style.display = 'block';
-      result.scrollIntoView({ behavior: 'smooth' });
-    });
-
-    document.getElementById('copy').addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(text); } catch (_) {
-        const ta = document.createElement('textarea');
-        ta.value = text; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); ta.remove();
-      }
-    });
-
-    document.getElementById('download').addEventListener('click', () => {
-      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'anketa-klan.txt';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    });
+    if (new URLSearchParams(location.search).get('sent') === '1') {
+      document.getElementById('sent').style.display = 'block';
+      document.getElementById('form').reset();
+      document.getElementById('sent').scrollIntoView({ behavior: 'smooth' });
+    }
   </script>
 </body>
 </html>
